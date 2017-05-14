@@ -53,7 +53,7 @@ class PelicanMathJaxCorrectDisplayMath(markdown.treeprocessors.Treeprocessor):
             el.text = text
             el.extend(children[current_idx:idx])
 
-            # Test to ensure that empty <p> is not inserted  
+            # Test to ensure that empty <p> is not inserted
             if len(el) != 0 or (el.text and not el.text.isspace()):
                root.insert(insert_idx, el)
                insert_idx += 1
@@ -90,7 +90,7 @@ class PelicanMathJaxCorrectDisplayMath(markdown.treeprocessors.Treeprocessor):
                 continue
 
             insert_idx = list(root).index(parent)
-            self.correct_html(root, children, div_math, insert_idx, parent.text) 
+            self.correct_html(root, children, div_math, insert_idx, parent.text)
             root.remove(parent)  # Parent must be removed last for correct insertion index
 
         return root
@@ -140,8 +140,8 @@ class PelicanMathJaxExtension(markdown.Extension):
 
     def extendMarkdown(self, md, md_globals):
         # Regex to detect mathjax
-        mathjax_inline_regex = r'(?P<prefix>\$)(?P<math>.+?)(?P<suffix>(?<!\s)\2)'
-        mathjax_display_regex = r'(?P<prefix>\$\$|\\begin\{(.+?)\})(?P<math>.+?)(?P<suffix>\2|\\end\{\3\})'
+        mathjax_inline_regex = r'(?P<prefix>\\\()(?P<math>.+?)(?P<suffix>(?<!\s)\\\))'
+        mathjax_display_regex = r'(?P<prefix>\\\[|\\begin\{(.+?)\})(?P<math>.+?)(?P<suffix>\\\]|\\end\{\3\})'
 
         # Process mathjax before escapes are processed since escape processing will
         # intefer with mathjax. The order in which the displayed and inlined math
@@ -149,7 +149,7 @@ class PelicanMathJaxExtension(markdown.Extension):
         md.inlinePatterns.add('mathjax_displayed', PelicanMathJaxPattern(self, 'div', mathjax_display_regex), '<escape')
         md.inlinePatterns.add('mathjax_inlined', PelicanMathJaxPattern(self, 'span', mathjax_inline_regex), '<escape')
 
-        # Correct the invalid HTML that results from teh displayed math (<div> tag within a <p> tag) 
+        # Correct the invalid HTML that results from teh displayed math (<div> tag within a <p> tag)
         md.treeprocessors.add('mathjax_correctdisplayedmath', PelicanMathJaxCorrectDisplayMath(self), '>inline')
 
         # If necessary, add the JavaScript Mathjax library to the document. This must
